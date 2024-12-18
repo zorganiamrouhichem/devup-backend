@@ -48,7 +48,7 @@ class AuthController extends Controller
             
             // Vous pouvez ici vérifier le rôle de l'utilisateur et générer un token en fonction de cela
             $user = JWTAuth::user();
-
+           
             if ($user->role === 'admin') {
                 // Si l'utilisateur est un admin, vous pouvez, par exemple, ajouter un "claim" spécial
                 $token = JWTAuth::fromUser($user, ['role' => 'admin']);
@@ -59,7 +59,10 @@ class AuthController extends Controller
             // nrecupiri role tee user ou generilou token special
     
             // Si tout va bien, retourner le token généré
-            return response()->json(['token' => $token]);
+            return response()->json([
+                'token' => $token,
+                'role' => $user->role
+            ]);
     
         } catch (JWTException $e) {
             return response()->json(['error' => 'Could not create token'], 500);
