@@ -5,8 +5,11 @@ use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\AubergeController;
 use Illuminate\Http\Request;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BlackListController;
+use App\Http\Controllers\EmployeController;
 use App\Http\Controllers\EtablissementController;
 use App\Http\Controllers\ResarvationController;
+use App\Http\Controllers\ResidentController;
 use App\Http\Controllers\ReviewController;
 use App\Models\AbonnementUser;
 use Illuminate\Support\Facades\Route;
@@ -28,6 +31,26 @@ Route::middleware(['auth:api_user',\App\Http\Middleware\CheckRole::class . ':use
 
 Route::middleware(['auth:api_admin',\App\Http\Middleware\CheckRole::class . ':admin'])->group( function () {
     Route::get('/auberge/{id_admin}', [AubergeController::class, 'getAubergeByAdmin']);
+
+    Route::get('/resident', [ResidentController::class, 'index']);
+    Route::post('/resident', [ResidentController::class, 'create']);
+    Route::get('/resident/{id}', [ResidentController::class, 'show']);
+    Route::put('/resident/{id}', [ResidentController::class, 'update']);
+    Route::delete('/resident/{id}', [ResidentController::class, 'destroy']);
+
+    // lister toutes les employés
+    Route::get('employe', [EmployeController::class, 'index']);
+    Route::post('/employe', [EmployeController::class, 'create']);
+    Route::get('/employe/{id}', [EmployeController::class, 'show']);
+    Route::put('/employe/{id}', [EmployeController::class, 'update']);
+    Route::delete('/employe/{id}', [EmployeController::class, 'destroy']);
+
+    // lister gens dans blacklist
+    Route::get('/blacklist', [BlackListController::class, 'index']);
+    Route::post('/blacklist', [BlacklistController::class, 'create']);
+    Route::get('/blacklist/{id}', [BlacklistController::class, 'show']);
+    Route::put('/blacklist/{id}', [BlacklistController::class, 'update']);
+    Route::delete('/blacklist/{id}', [BlacklistController::class, 'destroy']);
 });
 Route::middleware(['auth:api_superadmin', \App\Http\Middleware\CheckRole::class . ':superadmin'])->group(function () {
      

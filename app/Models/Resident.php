@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Resident extends Model
 {
     use HasFactory;
-
+    protected $table = 'resident';
     // Définir les champs massivement assignables
     protected $fillable = [
         'nom',
