@@ -26,6 +26,8 @@ Route::post('reviews', [ReviewController::class, 'store']);
 Route::middleware(['auth:api_user',\App\Http\Middleware\CheckRole::class . ':user'])->group(function () {
     Route::post('/reservations', [ResarvationController::class, 'store']);
     Route::post('/subscribe', [AbonnementController::class, 'subscribe']);
+    Route::post('/reserve', [ResarvationController::class, 'reserve']);
+
 
 });
 
