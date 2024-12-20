@@ -54,25 +54,28 @@ Route::middleware(['auth:api_admin',\App\Http\Middleware\CheckRole::class . ':ad
     Route::put('/blacklist/{id}', [BlacklistController::class, 'update']);
     Route::delete('/blacklist/{id}', [BlacklistController::class, 'destroy']);
 });
+Route::get('etablissements', [EtablissementController::class, 'index']);
+Route::get('/auberge', [AubergeController::class, 'index']);
+Route::get('activities', [ActivityController::class, 'index']);
+Route::get('reviews/{id_etablissement}', [ReviewController::class, 'index']);
+
+
+
 Route::middleware(['auth:api_superadmin', \App\Http\Middleware\CheckRole::class . ':superadmin'])->group(function () {
      
     // Lister toutes les auberges
-    Route::get('/auberge', [AubergeController::class, 'index']);
     Route::post('/auberge', [AubergeController::class, 'create']);
     Route::get('/auberge/{id}', [AubergeController::class, 'show']);
     Route::put('/auberge/{id}', [AubergeController::class, 'update']);
     Route::delete('/auberge/{id}', [AubergeController::class, 'destroy']);
 
 
-    Route::get('etablissements', [EtablissementController::class, 'index']);
     Route::get('etablissements/{id}', [EtablissementController::class, 'show']);
     Route::post('etablissements', [EtablissementController::class, 'create']);
     Route::put('etablissements/{id}', [EtablissementController::class, 'update']);
     Route::delete('etablissements/{id}', [EtablissementController::class, 'destroy']);
 
-    Route::get('activities', [ActivityController::class, 'index']);
 
-    Route::get('reviews/{id_etablissement}', [ReviewController::class, 'index']);
     Route::get('reviews/{id}', [ReviewController::class, 'show']);
     Route::post('reviews', [ReviewController::class, 'store']);
 });

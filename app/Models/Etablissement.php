@@ -17,7 +17,9 @@ class Etablissement extends Model
         'capacite',
         'abonnes',
         'lieu',
+        'Prix_nuit',
         'localisation',
+        'urldefaultimage',
         'activity_id',
     ];
     public function activity()
@@ -32,8 +34,4 @@ public function services()
 {
     return $this->hasMany(ServiceEtablissement::class, 'id_etablissement');
 }
-public function photos()
-    {
-        return $this->hasMany(PhotoEtablissement::class, 'id_etablissement');
-    }
 }

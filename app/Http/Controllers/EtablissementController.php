@@ -16,12 +16,15 @@ class EtablissementController extends Controller
      */
     public function index()
     {
-        // Récupérer tous les établissements avec leur activité, réservations, et services
-        $etablissements = Etablissement::with(['activity', 'reservations', 'services', 'photos'])->get();
-
-
-        return response()->json($etablissements,  200);
+        // Récupérer tous les établissements avec leur image par défaut ou la première photo
+        $etablissements = Etablissement::all();
+    
+        // Parcourir chaque établi
+    
+        // Retourner la réponse avec un code 200
+        return response()->json($etablissements, 200);
     }
+
 
     /**
      * Afficher les détails d'un établissement spécifique.
@@ -59,8 +62,8 @@ class EtablissementController extends Controller
             'abonnes' => 'required|integer',
             'lieu' => 'required|string|max:255',
             'localisation' => 'required|string|max:255',
-            'photos' => 'required|array', // L'image doit être un tableau de fichiers
-            'photos.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Validation des fichiers image
+            'Prix_nuit' => 'required|numeric',
+            'urldefaultimage' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Validation pour l'image par défaut
         ]);
     
         // Créer l'activité associée à l'établissement
@@ -77,33 +80,31 @@ class EtablissementController extends Controller
             'abonnes' => $validated['abonnes'],
             'lieu' => $validated['lieu'],
             'localisation' => $validated['localisation'],
+            'Prix_nuit' => $validated['Prix_nuit'],
             'activity_id' => $activity->id, // Associer l'activité à l'établissement
         ]);
     
-        // Traitement des photos : Upload des images
-        if ($request->hasFile('photos')) {
-            $photos = $request->file('photos');
-            
-            foreach ($photos as $photo) {
-                // Stocker l'image dans le dossier 'public/photos' et obtenir le chemin
-                $path = $photo->store('photos', 'public');
-                
-                // Créer une entrée dans la table PhotoEtablissement
-                PhotoEtablissement::create([
-                    'url' => $path, // Enregistrer le chemin relatif de l'image
-                    'id_etablissement' => $etablissement->id,
-                ]);
-            }
+        // Traitement de l'image par défaut
+        if ($request->hasFile('urldefaultimage')) {
+            $defaultImage = $request->file('urldefaultimage');
+    
+            // Stocker l'image par défaut dans le dossier 'public/images' et obtenir le chemin
+            $defaultImagePath = $defaultImage->store('images', 'public');
+    
+            // Mettre à jour l'établissement avec le chemin de l'image par défaut
+            $etablissement->urldefaultimage = $defaultImagePath;
+            $etablissement->save(); // Sauvegarder l'établissement avec l'URL de l'image par défaut
         }
-       
+    
         // Retourner la réponse avec l'établissement, l'activité, et les photos
         return response()->json([
-            'message' => 'Etablissement and Activity created successfully with photos',
-            'etablissement' => $etablissement->load('photos'), // Charger les photos associées
+            'message' => 'Etablissement and Activity created successfully with default image',
+            'etablissement' => $etablissement,  // Retourner l'établissement avec le chemin de l'image par défaut
             'activity' => $activity,
-            'photos' => $etablissement->photos, // Inclure les photos
         ], 201);
     }
+    
+
     
     /**
      * Mettre à jour les informations d'un établissement.
@@ -123,6 +124,7 @@ class EtablissementController extends Controller
             'abonnes' => 'required|integer',
             'lieu' => 'required|string|max:255',
             'localisation' => 'required|string|max:255',
+            'Prix_nuit' => 'required|float',
             'activity_id' => 'required|exists:activities,id', // Vérifier que l'ID de l'activité existe
         ]);
 
