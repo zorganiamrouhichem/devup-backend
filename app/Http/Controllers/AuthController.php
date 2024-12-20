@@ -18,7 +18,7 @@ class AuthController extends Controller
         'name' => 'required|string|max:255',
         'email' => 'required|string|email|max:255|unique:users',
         'password' => 'required|string|min:8|confirmed',
-        'role' => 'required|string|in:user,admin', // Validate the role to be either 'user' or 'admin'
+        'role' => 'required|string|in:user,admin,superadmin', // Validate the role to be either 'user' or 'admin'
     ]);
 
     
@@ -52,8 +52,11 @@ class AuthController extends Controller
             if ($user->role === 'admin') {
                 // Si l'utilisateur est un admin, vous pouvez, par exemple, ajouter un "claim" spécial
                 $token = JWTAuth::fromUser($user, ['role' => 'admin']);
+            } if ($user->role === 'superadmin') {
+                // Si l'utilisateur est un superadmin, vous pouvez, par exemple, ajouter un "claim" spécial
+                $token = JWTAuth::fromUser($user, ['role' => 'superadmin']);
             } else {
-                // Sinon, générer un token normal
+                // Si l'utilisateur est un utilisateur normal, vous pouvez, par exemple, ajouter un "claim" spécial
                 $token = JWTAuth::fromUser($user);
             }
             // nrecupiri role tee user ou generilou token special

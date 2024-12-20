@@ -35,23 +35,19 @@ return [
     |
     */
 
-    'guards' => [
-    'web' => [
-        'driver' => 'session',
-        'provider' => 'users',
-    ],
-    
+   'guards' => [
     'api_user' => [
         'driver' => 'jwt',
         'provider' => 'users',
     ],
-    
     'api_admin' => [
         'driver' => 'jwt',
         'provider' => 'users',
     ],
-
-
+    'api_superadmin' => [
+        'driver' => 'jwt',
+        'provider' => 'users',
+    ],
 ],
 
     /*
