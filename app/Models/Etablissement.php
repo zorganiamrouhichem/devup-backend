@@ -25,15 +25,15 @@ class Etablissement extends Model
         return $this->belongsTo(Activity::class, 'activity_id'); // L'établissement appartient à une activité via l'ID de l'activité
     }
     public function reservations()
-{
-    return $this->hasMany(Reservation::class);
-}
+    {
+        return $this->hasMany(Reservation::class, 'id_etablissement');
+    }
 public function services()
 {
-    return $this->hasMany(ServiceEtablissement::class);
+    return $this->hasMany(ServiceEtablissement::class, 'id_etablissement');
 }
 public function photos()
-{
-    return $this->hasMany(PhotoEtablissement::class);
-}
+    {
+        return $this->hasMany(PhotoEtablissement::class, 'id_etablissement');
+    }
 }

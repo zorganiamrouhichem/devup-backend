@@ -48,66 +48,63 @@ class EtablissementController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function create(Request $request)
-{
-    // Validation des données reçues
-    $validated = $request->validate([
-        'activity_nom' => 'required|string|max:255',
-        'etablissement_nom' => 'required|string|max:255',
-        'type' => 'required|string|max:255',
-        'description' => 'required|string',
-        'capacite' => 'required|integer',
-        'abonnes' => 'required|integer',
-        'lieu' => 'required|string|max:255',
-        'localisation' => 'required|string|max:255',
-        'photos' => 'required|array', // L'image doit être un tableau de fichiers
-        'photos.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Validation des fichiers image
-    ]);
-
-    // Créer l'activité associée à l'établissement
-    $activity = Activity::create([
-        'nom' => $validated['activity_nom'],
-    ]);
-
-    // Créer l'établissement
-    $etablissement = Etablissement::create([
-        'nom' => $validated['etablissement_nom'],
-        'type' => $validated['type'],
-        'description' => $validated['description'],
-        'capacite' => $validated['capacite'],
-        'abonnes' => $validated['abonnes'],
-        'lieu' => $validated['lieu'],
-        'localisation' => $validated['localisation'],
-        'activity_id' => $activity->id, // Associer l'activité à l'établissement
-    ]);
-
-    // Traitement des photos : Upload des images
-    if ($request->hasFile('photos')) {
-        $photos = $request->file('photos');
-        
-        foreach ($photos as $photo) {
-            // Stocker l'image dans le dossier 'public/photos' et obtenir le chemin
-            $path = $photo->store('photos', 'public');
+    {
+        // Validation des données reçues
+        $validated = $request->validate([
+            'activity_nom' => 'required|string|max:255',
+            'etablissement_nom' => 'required|string|max:255',
+            'type' => 'required|string|max:255',
+            'description' => 'required|string',
+            'capacite' => 'required|integer',
+            'abonnes' => 'required|integer',
+            'lieu' => 'required|string|max:255',
+            'localisation' => 'required|string|max:255',
+            'photos' => 'required|array', // L'image doit être un tableau de fichiers
+            'photos.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Validation des fichiers image
+        ]);
+    
+        // Créer l'activité associée à l'établissement
+        $activity = Activity::create([
+            'nom' => $validated['activity_nom'],
+        ]);
+    
+        // Créer l'établissement
+        $etablissement = Etablissement::create([
+            'nom' => $validated['etablissement_nom'],
+            'type' => $validated['type'],
+            'description' => $validated['description'],
+            'capacite' => $validated['capacite'],
+            'abonnes' => $validated['abonnes'],
+            'lieu' => $validated['lieu'],
+            'localisation' => $validated['localisation'],
+            'activity_id' => $activity->id, // Associer l'activité à l'établissement
+        ]);
+    
+        // Traitement des photos : Upload des images
+        if ($request->hasFile('photos')) {
+            $photos = $request->file('photos');
             
-            // Créer une entrée dans la table PhotoEtablissement
-            PhotoEtablissement::create([
-                'url' => $path, // Enregistrer le chemin relatif de l'image
-                'id_etablissement' => $etablissement->id,
-            ]);
+            foreach ($photos as $photo) {
+                // Stocker l'image dans le dossier 'public/photos' et obtenir le chemin
+                $path = $photo->store('photos', 'public');
+                
+                // Créer une entrée dans la table PhotoEtablissement
+                PhotoEtablissement::create([
+                    'url' => $path, // Enregistrer le chemin relatif de l'image
+                    'id_etablissement' => $etablissement->id,
+                ]);
+            }
         }
+       
+        // Retourner la réponse avec l'établissement, l'activité, et les photos
+        return response()->json([
+            'message' => 'Etablissement and Activity created successfully with photos',
+            'etablissement' => $etablissement->load('photos'), // Charger les photos associées
+            'activity' => $activity,
+            'photos' => $etablissement->photos, // Inclure les photos
+        ], 201);
     }
-
-    // Charger la relation 'photos' après la création de l'établissement
-    $etablissement->load('photos');
-
-    // Retourner la réponse avec l'établissement, l'activité et les photos
-    return response()->json([
-        'message' => 'Etablissement and Activity created successfully with photos',
-        'etablissement' => $etablissement,
-        'activity' => $activity,
-        'photos' => $etablissement->photos, // Inclure les photos ici
-    ], 201);
-}
-
+    
     /**
      * Mettre à jour les informations d'un établissement.
      *

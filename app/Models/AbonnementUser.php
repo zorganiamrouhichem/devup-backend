@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class AbonnementUser extends Model
 {
     use HasFactory;
+    protected $table = 'abonnement_user';
 
     // Définir les champs massivement assignables
     protected $fillable = [

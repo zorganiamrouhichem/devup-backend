@@ -154,4 +154,19 @@ class AubergeController extends Controller
             'message' => 'Auberge deleted successfully'
         ], 200);
     }
+    public function getAubergeByAdmin($id_admin)
+    {
+        // Recherche de l'auberge en fonction de l'id_admin
+        $auberge = Auberge::where('id_admin', $id_admin)->first();
+
+        // Vérifier si une auberge a été trouvée
+        if (!$auberge) {
+            return response()->json(['message' => 'Auberge not found for this admin'], 404);
+        }
+
+        // Retourner la réponse avec l'id de l'auberge
+        return response()->json([
+            'id_auberge' => $auberge->id
+        ], 200);
+    }
 }

@@ -1,10 +1,14 @@
 <?php
 
+use App\Http\Controllers\AbonnementController;
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\AubergeController;
 use Illuminate\Http\Request;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EtablissementController;
+use App\Http\Controllers\ResarvationController;
+use App\Http\Controllers\ReviewController;
+use App\Models\AbonnementUser;
 use Illuminate\Support\Facades\Route;
 
 Route::post('login', [AuthController::class, 'login']);
@@ -12,14 +16,18 @@ Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:api_u
 Route::get('me', [AuthController::class, 'me'])->middleware('auth:api_user');
 Route::post('register', [AuthController::class, 'register']);
 
+Route::get('reviews/{id_etablissement}', [ReviewController::class, 'index']);
+Route::get('reviews/{id}', [ReviewController::class, 'show']);
+Route::post('reviews', [ReviewController::class, 'store']);
 
+Route::middleware(['auth:api_user',\App\Http\Middleware\CheckRole::class . ':user'])->group(function () {
+    Route::post('/reservations', [ResarvationController::class, 'store']);
+    Route::post('/subscribe', [AbonnementController::class, 'subscribe']);
 
-Route::middleware(['auth:api_user',\App\Http\Middleware\CheckRole::class . ':user'])->get('/user/dashboard', function () {
-    return response()->json(['message' => 'Welcome to the User Dashboard']);
 });
 
-Route::middleware(['auth:api_admin',\App\Http\Middleware\CheckRole::class . ':admin'])->get('/admin/dashboard', function () {
-    return response()->json(['message' => 'Welcome to the Admin Dashboard']);
+Route::middleware(['auth:api_admin',\App\Http\Middleware\CheckRole::class . ':admin'])->group( function () {
+    Route::get('/auberge/{id_admin}', [AubergeController::class, 'getAubergeByAdmin']);
 });
 Route::middleware(['auth:api_superadmin', \App\Http\Middleware\CheckRole::class . ':superadmin'])->group(function () {
      
@@ -38,4 +46,8 @@ Route::middleware(['auth:api_superadmin', \App\Http\Middleware\CheckRole::class 
     Route::delete('etablissements/{id}', [EtablissementController::class, 'destroy']);
 
     Route::get('activities', [ActivityController::class, 'index']);
+
+    Route::get('reviews/{id_etablissement}', [ReviewController::class, 'index']);
+    Route::get('reviews/{id}', [ReviewController::class, 'show']);
+    Route::post('reviews', [ReviewController::class, 'store']);
 });

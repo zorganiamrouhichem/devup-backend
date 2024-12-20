@@ -9,14 +9,17 @@ class ServiceEtablissement extends Model
 {
     use HasFactory;
 
-    // Définir les champs massivement assignables
+    // Si le nom de la table est différent de la convention de Laravel, vous pouvez le spécifier
+    protected $table = 'service_etablissement';
+
     protected $fillable = [
         'nom',
         'id_etablissement',
+        
     ];
 
     /**
-     * Relation : Un service appartient à un établissement
+     * Relation : Un service appartient à un établissement.
      */
     public function etablissement()
     {
