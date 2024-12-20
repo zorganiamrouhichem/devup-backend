@@ -91,4 +91,19 @@ class AuthController extends Controller
         return response()->json(['error' => 'Could not log out, please try again'], 500);
     }
 }
+public function me(Request $request)
+    {
+        try {
+            // Récupérer l'utilisateur authentifié via le token JWT
+            $user = JWTAuth::user();
+
+            // Retourner les informations de l'utilisateur sous forme de JSON
+            return response()->json([
+                'user' => $user
+            ]);
+
+        } catch (JWTException $e) {
+            return response()->json(['error' => 'Could not retrieve user'], 500);
+        }
+    }
 }
