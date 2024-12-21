@@ -6,27 +6,50 @@ use App\Http\Controllers\AubergeController;
 use Illuminate\Http\Request;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BlackListController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\EmployeController;
 use App\Http\Controllers\EtablissementController;
+use App\Http\Controllers\RechercheController;
 use App\Http\Controllers\ResarvationController;
 use App\Http\Controllers\ResidentController;
 use App\Http\Controllers\ReviewController;
 use App\Models\AbonnementUser;
 use Illuminate\Support\Facades\Route;
 
+
 Route::post('login', [AuthController::class, 'login']);
 Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:api_user');
 Route::get('me', [AuthController::class, 'me'])->middleware('auth:api_user');
 Route::post('register', [AuthController::class, 'register']);
+Route::get('/user/{id}/name', [AuthController::class, 'getUserNameById']);
 
+// test gmail send activité
+// Route::post('send/email', [ContactController::class, 'mail'])->name('email');
+
+// Route::post('send/email',[ContactController::class, 'mail'])->name('email');
+Route::post('send/email',[ContactController::class, 'testMail'])->name('emailt');
+Route::post('send/emailr',[ContactController::class, 'testMailr'])->name('emailtr');
+// test gmail send reserve 
+// Route::post('send/emailr',[ContactController::class, 'mailr'])->name('emailr');
+
+Route::post('/check-availability', [ResarvationController::class, 'checkAvailability']);
+
+// Route pour créer la réservation
 Route::get('reviews/{id_etablissement}', [ReviewController::class, 'index']);
 Route::get('reviews/{id}', [ReviewController::class, 'show']);
 Route::post('reviews', [ReviewController::class, 'store']);
+Route::post('/recherche', [RechercheController::class, 'rechercher']);
+
 
 Route::middleware(['auth:api_user',\App\Http\Middleware\CheckRole::class . ':user'])->group(function () {
     Route::post('/reservations', [ResarvationController::class, 'store']);
     Route::post('/subscribe', [AbonnementController::class, 'subscribe']);
     Route::post('/reserve', [ResarvationController::class, 'reserve']);
+    Route::get('reviews/{id}', [ReviewController::class, 'show']);
+    Route::post('reviews', [ReviewController::class, 'store']);
+    Route::post('/reserve', [ResarvationController::class, 'reserve']);
+
+
 
 
 });
@@ -58,6 +81,8 @@ Route::get('etablissements', [EtablissementController::class, 'index']);
 Route::get('/auberge', [AubergeController::class, 'index']);
 Route::get('activities', [ActivityController::class, 'index']);
 Route::get('reviews/{id_etablissement}', [ReviewController::class, 'index']);
+Route::get('etablissements/{id}', [EtablissementController::class, 'show']);
+
 
 
 
@@ -70,12 +95,10 @@ Route::middleware(['auth:api_superadmin', \App\Http\Middleware\CheckRole::class 
     Route::delete('/auberge/{id}', [AubergeController::class, 'destroy']);
 
 
-    Route::get('etablissements/{id}', [EtablissementController::class, 'show']);
     Route::post('etablissements', [EtablissementController::class, 'create']);
     Route::put('etablissements/{id}', [EtablissementController::class, 'update']);
     Route::delete('etablissements/{id}', [EtablissementController::class, 'destroy']);
 
 
-    Route::get('reviews/{id}', [ReviewController::class, 'show']);
-    Route::post('reviews', [ReviewController::class, 'store']);
+   
 });

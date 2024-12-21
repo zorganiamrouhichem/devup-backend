@@ -34,13 +34,14 @@ class EtablissementController extends Controller
      */
     public function show($id)
 {
-    // Récupérer l'établissement par son ID, avec l'activité, les réservations, les services, et les photos
-    $etablissement = Etablissement::with(['activity', 'reservations', 'services', 'photos'])->find($id);
+    // Récupérer l'établissement par son ID, sans ses relations
+    $etablissement = Etablissement::find($id);
 
     if (!$etablissement) {
         return response()->json(['message' => 'Etablissement not found'], 404);
     }
 
+    // Retourner uniquement l'établissement sans ses relations
     return response()->json($etablissement, 200);
 }
 
@@ -59,11 +60,10 @@ class EtablissementController extends Controller
             'type' => 'required|string|max:255',
             'description' => 'required|string',
             'capacite' => 'required|integer',
-            'abonnes' => 'required|integer',
             'lieu' => 'required|string|max:255',
             'localisation' => 'required|string|max:255',
             'Prix_nuit' => 'required|numeric',
-            'urldefaultimage' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Validation pour l'image par défaut
+            'urldefaultimage' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg', // Validation pour l'image par défaut
         ]);
     
         // Créer l'activité associée à l'établissement
@@ -77,7 +77,6 @@ class EtablissementController extends Controller
             'type' => $validated['type'],
             'description' => $validated['description'],
             'capacite' => $validated['capacite'],
-            'abonnes' => $validated['abonnes'],
             'lieu' => $validated['lieu'],
             'localisation' => $validated['localisation'],
             'Prix_nuit' => $validated['Prix_nuit'],
@@ -121,7 +120,6 @@ class EtablissementController extends Controller
             'type' => 'required|string|max:255',
             'description' => 'required|string',
             'capacite' => 'required|integer',
-            'abonnes' => 'required|integer',
             'lieu' => 'required|string|max:255',
             'localisation' => 'required|string|max:255',
             'Prix_nuit' => 'required|float',

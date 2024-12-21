@@ -17,7 +17,7 @@ class AuthController extends Controller
     $validated = $request->validate([
         'name' => 'required|string|max:255',
         'email' => 'required|string|email|max:255|unique:users',
-        'password' => 'required|string|min:8|confirmed',
+        'password' => 'required|string|min:8',
         'role' => 'required|string|in:user,admin,superadmin', // Validate the role to be either 'user' or 'admin'
     ]);
 
@@ -106,4 +106,24 @@ public function me(Request $request)
             return response()->json(['error' => 'Could not retrieve user'], 500);
         }
     }
+    public function getUserNameById($id)
+{
+    try {
+        // Récupérer l'utilisateur par son ID
+        $user = User::find($id);
+
+        // Vérifier si l'utilisateur existe
+        if (!$user) {
+            return response()->json(['error' => 'User not found'], 404);
+        }
+
+        // Retourner le nom de l'utilisateur
+        return response()->json([
+            'name' => $user->name
+        ], 200);
+
+    } catch (\Exception $e) {
+        return response()->json(['error' => 'Could not retrieve user'], 500);
+    }
+}
 }

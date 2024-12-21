@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Review extends Model
 {
     use HasFactory;
+    protected $table = 'review';
 
     // Définir les champs massivement assignables
     protected $fillable = [

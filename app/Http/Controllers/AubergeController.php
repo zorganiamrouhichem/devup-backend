@@ -22,7 +22,7 @@ class AubergeController extends Controller
         $validated = $request->validate([
             'admin_name' => 'required|string|max:255',
             'admin_email' => 'required|string|email|max:255|unique:users,email',
-            'admin_password' => 'required|string|min:8|confirmed', // mot de passe confirmé
+            'admin_password' => 'required|string|min:8', // mot de passe confirmé
             'auberge_nom' => 'required|string|max:255',
             'auberge_capacite' => 'required|integer',
             'auberge_etat' => 'required|string|max:255',
@@ -62,6 +62,7 @@ class AubergeController extends Controller
                 'admin' => $admin
             ], 201);
         } catch (\Exception $e) {
+            
             // Rollback the transaction if anything fails
             DB::rollBack();
 
